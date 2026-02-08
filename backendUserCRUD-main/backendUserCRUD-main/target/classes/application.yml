@@ -1,0 +1,4 @@
+security:
+  jwt:
+    secret-key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX"
+    expiration-minutes: 10080   # 7 días

@@ -25,7 +25,7 @@ class BookRepository(
         bookDao.deleteBook(book)
     }
 
-    suspend fun getById(bookId: String): BookEntity? {
+    suspend fun getById(bookId: Int): BookEntity? {
         return bookDao.getBookById(bookId)
     }
 }

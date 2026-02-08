@@ -1,0 +1,5 @@
+com\fempa\dam\users\api\dto\response\UserResponseDto$UserResponseDtoBuilder.class
+com\fempa\dam\users\api\entity\user\UserEntity$UserEntityBuilder.class
+com\fempa\dam\users\api\dto\response\UserResponseDto.class
+com\fempa\dam\users\api\entity\user\UserEntity.class
+com\fempa\dam\users\api\mapper\UserMapper.class

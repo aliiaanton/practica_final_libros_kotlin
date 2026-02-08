@@ -2,10 +2,11 @@ package com.example.practicafinallibros.data.repository
 
 import com.example.practicafinallibros.data.local.dao.UserDao
 import com.example.practicafinallibros.data.local.entity.UserEntity
-import com.example.practicafinalLibros.data.remote.api.AuthApiService
+import com.example.practicafinallibros.data.remote.UsersApi
+import com.example.practicafinallibros.data.remote.dto.UpdateUserRequest
 
 class UserRepository(
-    private val api: AuthApiService,
+    private val api: UsersApi,
     private val userDao: UserDao
 ) {
 
@@ -13,18 +14,22 @@ class UserRepository(
 
     suspend fun refresh(token: String) {
         try {
-            val usersDto = api.getAllUsers("Bearer $token")
+            val response = api.getAllUsers("Bearer $token")
 
-            val usersEntity: List<UserEntity> = usersDto.map { userDto ->
-                UserEntity(
-                    id = userDto.id,
-                    name = userDto.name,
-                    email = userDto.email,
-                    role = userDto.role
-                )
+            if (response.isSuccessful) {
+                val usersDto = response.body()!!
+                val usersEntity: List<UserEntity> = usersDto.map { userDto ->
+                    UserEntity(
+                        id = userDto.id.toString(),
+                        name = userDto.name,
+                        email = userDto.email,
+                        role = userDto.role
+                    )
+                }
+                usersEntity.forEach { userDao.insertUser(it) }
+            } else {
+                throw Exception("Error: ${response.code()}")
             }
-
-            usersEntity.forEach { userDao.insertUser(it) }
         } catch (e: Exception) {
             throw e
         }
@@ -32,19 +37,24 @@ class UserRepository(
 
     suspend fun updateUserName(token: String, userId: String, newName: String) {
         try {
-            val updatedDto = api.updateUser(
+            val response = api.updateUser(
                 token = "Bearer $token",
-                userId = userId,
-                updateRequest = UpdateUserRequest(name = newName)
+                id = userId.toLong(),
+                request = UpdateUserRequest(name = newName)
             )
 
-            val entity = UserEntity(
-                id = updatedDto.id,
-                name = updatedDto.name,
-                email = updatedDto.email,
-                role = updatedDto.role
-            )
-            userDao.updateUser(entity)
+            if (response.isSuccessful) {
+                val updatedDto = response.body()!!
+                val entity = UserEntity(
+                    id = updatedDto.id.toString(),
+                    name = updatedDto.name,
+                    email = updatedDto.email,
+                    role = updatedDto.role
+                )
+                userDao.updateUser(entity)
+            } else {
+                throw Exception("Error: ${response.code()}")
+            }
         } catch (e: Exception) {
             throw e
         }
@@ -52,9 +62,13 @@ class UserRepository(
 
     suspend fun deleteUser(token: String, userId: String) {
         try {
-            api.deleteUser("Bearer $token", userId)
+            val response = api.deleteUser("Bearer $token", userId.toLong())
 
-            userDao.deleteUserById(userId)
+            if (response.isSuccessful) {
+                userDao.deleteUserById(userId)
+            } else {
+                throw Exception("Error: ${response.code()}")
+            }
         } catch (e: Exception) {
             throw e
         }

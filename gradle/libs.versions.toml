@@ -9,7 +9,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.10.01"
 ksp = "2.3.2"
-room = "2.6.1"
+room = "2.7.0-alpha11"
 retrofit = "2.9.0"
 okhttp = "4.12.0"
 coil = "2.7.0"
@@ -58,4 +58,3 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 # Este es el que te faltaba y daba error de "unresolved reference"
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-
