@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">PracticaFinalLibros</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="session_label">Sesión</string>
+    <string name="role_admin">Administrador</string>
+    <string name="role_user">Usuario</string>
+    <string name="dark_mode">Modo oscuro</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="logout_confirm_title">Cerrar sesión</string>
+    <string name="logout_confirm_msg">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="edit_profile">Editar perfil</string>
+    <string name="profile_title">Mi Perfil</string>
+    <string name="name_label">Nombre</string>
+    <string name="save_changes">Guardar Cambios</string>
+    <string name="back">Volver</string>
+    <string name="share">Compartir</string>
+    <string name="favorite">Favorito</string>
+    <string name="edit">Editar</string>
+    <string name="delete">Eliminar</string>
+    <string name="delete_book_title">Eliminar libro</string>
+    <string name="delete_book_msg">¿Estás seguro de que quieres eliminar \"%1$s\"?</string>
 </resources>

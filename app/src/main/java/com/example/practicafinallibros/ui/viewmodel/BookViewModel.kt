@@ -97,6 +97,18 @@ class BookViewModel(
         return repository.getById(bookId)
     }
 
+    fun toggleFavoriteStatus(bookId: Int, isFavorite: Boolean) {
+        viewModelScope.launch {
+            try {
+                repository.toggleFavoriteStatus(bookId, isFavorite)
+                loadBooks()
+                uiState = BooksUiState.Success("Estado de favorito actualizado")
+            } catch (e: Exception) {
+                uiState = BooksUiState.Error("Error al actualizar estado de favorito")
+            }
+        }
+    }
+
     fun resetState() {
         uiState = BooksUiState.Idle
     }

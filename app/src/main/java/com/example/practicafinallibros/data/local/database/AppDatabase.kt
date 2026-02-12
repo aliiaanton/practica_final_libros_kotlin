@@ -9,7 +9,7 @@ import com.example.practicafinallibros.data.local.entity.UserEntity
 
 @Database(
     entities = [BookEntity::class, UserEntity::class],
-    version = 1,
+    version = 2,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao

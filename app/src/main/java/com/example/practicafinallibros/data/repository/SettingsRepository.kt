@@ -73,6 +73,6 @@ class SettingsRepository(private val context: Context) {
     }
 
     fun isUserAdmin(): Flow<Boolean> = context.dataStore.data.map { preferences ->
-        preferences[PreferenceKeys.USER_ROLE] == "admin"
+        preferences[PreferenceKeys.USER_ROLE]?.lowercase() == "admin"
     }
 }

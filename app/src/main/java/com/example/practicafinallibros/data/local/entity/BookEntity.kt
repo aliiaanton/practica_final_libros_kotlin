@@ -15,5 +15,6 @@ data class BookEntity(
     val createdByName: String,
     val genre: String?,
     val pageCount: Int?,
-    val publishYear: Int?
+    val publishYear: Int?,
+    val isFavorite: Boolean = false
 )

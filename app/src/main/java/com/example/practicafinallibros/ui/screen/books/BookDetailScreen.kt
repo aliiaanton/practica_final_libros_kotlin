@@ -1,6 +1,7 @@
 package com.example.practicafinallibros.ui.screen.books
 
 import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -8,6 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -50,6 +54,7 @@ fun BookDetailScreen(
 
     val currentBook = book!!
     val isOwner = currentBook.createdBy == authViewModel.userId
+    var isFavorite by remember { mutableStateOf(currentBook.isFavorite) }
 
     Column(
         Modifier
@@ -61,8 +66,31 @@ fun BookDetailScreen(
             IconButton(onClick = onBack) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
             }
-            if (isOwner) {
-                Row {
+            Row {
+                IconButton(onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_SUBJECT, currentBook.title)
+                        putExtra(Intent.EXTRA_TEXT, "Mira este libro: ${currentBook.title} de ${currentBook.author}\n\n${currentBook.description}")
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Compartir libro"))
+                }) {
+                    Icon(Icons.Default.Share, contentDescription = "Compartir")
+                }
+
+                IconButton(onClick = {
+                    val newState = !isFavorite
+                    isFavorite = newState
+                    bookViewModel.toggleFavoriteStatus(currentBook.id, newState)
+                }) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = "Favorito",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                if (isOwner) {
                     IconButton(onClick = onEdit) {
                         Icon(Icons.Default.Edit, contentDescription = "Editar")
                     }

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.practicafinallibros.data.local.database.AppDatabase
@@ -37,7 +38,9 @@ class MainActivity : ComponentActivity() {
             applicationContext,
             AppDatabase::class.java,
             "libros-db"
-        ).build()
+        )
+        .fallbackToDestructiveMigration() // Añadido para permitir cambios en el esquema sin migraciones manuales
+        .build()
 
         val settingsRepository = SettingsRepository(applicationContext)
         val bookRepository = BookRepository(database.bookDao())

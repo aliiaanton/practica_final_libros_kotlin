@@ -4,6 +4,9 @@ import com.example.practicafinallibros.data.remote.UsersApi
 import com.example.practicafinallibros.data.remote.dto.AuthResponse
 import com.example.practicafinallibros.data.remote.dto.LoginRequest
 import com.example.practicafinallibros.data.remote.dto.RegisterRequest
+import com.example.practicafinallibros.data.remote.dto.UpdateUserRequest
+import com.example.practicafinallibros.data.remote.dto.UserDto
+import kotlinx.coroutines.flow.firstOrNull
 
 class AuthRepository(
     private val api: UsersApi,
@@ -38,6 +41,24 @@ class AuthRepository(
                 login(email, password)
             } else {
                 Result.failure(Exception("Error: ${registerResponse.code()}"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun updateProfile(newName: String): Result<UserDto> {
+        return try {
+            val token = settingsRepository.getAuthToken().firstOrNull() ?: return Result.failure(Exception("No token"))
+            val userId = settingsRepository.getUserId().firstOrNull()?.toLongOrNull() ?: return Result.failure(Exception("No userId"))
+            
+            val response = api.updateUser("Bearer $token", userId, UpdateUserRequest(newName))
+            if (response.isSuccessful) {
+                val updatedUser = response.body()!!
+                settingsRepository.saveUserName(updatedUser.name)
+                Result.success(updatedUser)
+            } else {
+                Result.failure(Exception("Error: ${response.code()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

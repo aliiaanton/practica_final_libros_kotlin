@@ -9,6 +9,7 @@ object Routes {
     const val EXPLORE = "explore"
     const val ADMIN = "admin"
     const val SETTINGS = "settings"
+    const val PROFILE = "profile"
 
     fun getFormRoute(bookId: Int? = null): String {
         return if (bookId != null) "book_form?bookId=$bookId" else "book_form"

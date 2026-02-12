@@ -8,5 +8,5 @@ data class UserEntity(
     @PrimaryKey val id: String,
     val name: String,
     val email: String,
-    val role: String // "admin" o "user"
+    val role: String
 )

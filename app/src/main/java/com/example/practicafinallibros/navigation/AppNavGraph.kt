@@ -25,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
 import com.example.practicafinallibros.ui.screen.admin.AdminUserListScreen
 import com.example.practicafinallibros.ui.screen.auth.LoginScreen
+import com.example.practicafinallibros.ui.screen.auth.ProfileScreen
 import com.example.practicafinallibros.ui.screen.auth.RegisterScreen
 import com.example.practicafinallibros.ui.screen.books.BookDetailScreen
 import com.example.practicafinallibros.ui.screen.books.BookFormScreen
@@ -122,6 +123,13 @@ fun AppNavGraph(
                     )
                 }
 
+                composable(Routes.PROFILE) {
+                    ProfileScreen(
+                        authViewModel = authViewModel,
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+
                 composable(Routes.BOOK_LIST) {
                     BookListScreen(
                         bookViewModel = bookViewModel,
@@ -187,7 +195,8 @@ fun AppNavGraph(
                             navController.navigate(Routes.LOGIN) {
                                 popUpTo(0) { inclusive = true }
                             }
-                        }
+                        },
+                        onNavigateToProfile = { navController.navigate(Routes.PROFILE) }
                     )
                 }
             }

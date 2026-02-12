@@ -90,6 +90,22 @@ class AuthViewModel(
         }
     }
 
+    fun updateProfile(newName: String) {
+        viewModelScope.launch {
+            uiState = AuthUiState.Loading
+            try {
+                val result = authRepository.updateProfile(newName)
+                if (result.isSuccess) {
+                    uiState = AuthUiState.Success("Perfil actualizado correctamente")
+                } else {
+                    uiState = AuthUiState.Error(result.exceptionOrNull()?.message ?: "Error al actualizar")
+                }
+            } catch (e: Exception) {
+                uiState = AuthUiState.Error("Error de conexión")
+            }
+        }
+    }
+
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()

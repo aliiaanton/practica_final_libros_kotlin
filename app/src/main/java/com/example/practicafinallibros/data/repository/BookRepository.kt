@@ -28,4 +28,8 @@ class BookRepository(
     suspend fun getById(bookId: Int): BookEntity? {
         return bookDao.getBookById(bookId)
     }
+
+    suspend fun toggleFavoriteStatus(bookId: Int, isFavorite: Boolean) {
+        bookDao.updateFavoriteStatus(bookId, isFavorite)
+    }
 }

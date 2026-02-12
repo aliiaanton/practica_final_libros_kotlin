@@ -3,7 +3,9 @@ package com.example.practicafinallibros.ui.screen.settings
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,7 +18,8 @@ import com.example.practicafinallibros.ui.viewmodel.SettingsViewModel
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel,
     authViewModel: AuthViewModel,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToProfile: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
 
@@ -35,17 +38,35 @@ fun SettingsScreen(
     ) {
         Text("Ajustes", style = MaterialTheme.typography.headlineSmall)
 
-        // User info
+        // User info with profile edit button
         ElevatedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp)) {
-                Text("Sesión", style = MaterialTheme.typography.titleMedium)
-                Spacer(Modifier.height(4.dp))
-                Text("Usuario: ${authViewModel.userName ?: "-"}", style = MaterialTheme.typography.bodyMedium)
-                Text(
-                    "Rol: ${if (authViewModel.isAdmin) "Administrador" else "Usuario"}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(authViewModel.userName ?: "-", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                if (authViewModel.isAdmin) "Administrador" else "Usuario",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    IconButton(onClick = onNavigateToProfile) {
+                        Icon(Icons.Default.Edit, contentDescription = "Editar perfil")
+                    }
+                }
             }
         }
 
