@@ -20,4 +20,31 @@
     <string name="delete">Eliminar</string>
     <string name="delete_book_title">Eliminar libro</string>
     <string name="delete_book_msg">¿Estás seguro de que quieres eliminar \"%1$s\"?</string>
+
+    <string name="nav_my_books">Mis Libros</string>
+    <string name="nav_explore">Explorar</string>
+    <string name="nav_admin">Admin</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="nav_favorites">Favoritos</string>
+
+    <string name="search_hint">Buscar libros...</string>
+    <string name="filter_mine">Solo míos</string>
+    <string name="filter_all">Todos</string>
+    <string name="books_count">%1$d libros</string>
+    <string name="no_books">No hay libros. ¡Añade el primero!</string>
+    <string name="add_book">Añadir libro</string>
+    <string name="by_owner">Por: %1$s</string>
+
+    <string name="explore_title">Explorar libros</string>
+    <string name="explore_search_hint">Buscar en Open Library</string>
+    <string name="no_connection">Sin conexión a internet. Conéctate para buscar libros.</string>
+    <string name="year_label">Año: %1$d</string>
+    <string name="add_to_collection">Añadir a mi colección</string>
+    <string name="book_added_title">Libro añadido</string>
+    <string name="book_added_msg">\"%1$s\" añadido a tu colección</string>
+    <string name="unknown_author">Desconocido</string>
+    <string name="imported_desc">Importado desde Open Library</string>
+
+    <string name="favorites_title">Mis Favoritos</string>
+    <string name="no_favorites">No tienes libros favoritos todavía.</string>
 </resources>

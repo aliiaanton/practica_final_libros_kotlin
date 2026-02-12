@@ -19,6 +19,16 @@ class SettingsRepository(private val context: Context) {
         }
     }
 
+    fun observeLanguage(): Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.LANGUAGE] ?: "es"
+    }
+
+    suspend fun setLanguage(language: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.LANGUAGE] = language
+        }
+    }
+
     suspend fun saveAuthToken(token: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferenceKeys.AUTH_TOKEN] = token

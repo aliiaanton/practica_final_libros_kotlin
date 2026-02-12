@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
@@ -17,12 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.example.practicafinallibros.R
 import com.example.practicafinallibros.ui.screen.admin.AdminUserListScreen
 import com.example.practicafinallibros.ui.screen.auth.LoginScreen
 import com.example.practicafinallibros.ui.screen.auth.ProfileScreen
@@ -30,6 +33,7 @@ import com.example.practicafinallibros.ui.screen.auth.RegisterScreen
 import com.example.practicafinallibros.ui.screen.books.BookDetailScreen
 import com.example.practicafinallibros.ui.screen.books.BookFormScreen
 import com.example.practicafinallibros.ui.screen.books.BookListScreen
+import com.example.practicafinallibros.ui.screen.books.FavoritesScreen
 import com.example.practicafinallibros.ui.screen.settings.SettingsScreen
 import com.example.practicafinallibros.ui.screen.explore.ExploreScreen
 import com.example.practicafinallibros.ui.viewmodel.AdminViewModel
@@ -40,7 +44,7 @@ import com.example.practicafinallibros.ui.viewmodel.SettingsViewModel
 
 data class BottomNavItem(
     val route: String,
-    val label: String,
+    val labelRes: Int,
     val icon: ImageVector
 )
 
@@ -60,21 +64,23 @@ fun AppNavGraph(
     val isAuthScreen = currentRoute == Routes.LOGIN || currentRoute == Routes.REGISTER
 
     val bottomNavItems = mutableListOf(
-        BottomNavItem(Routes.BOOK_LIST, "Mis Libros", Icons.Default.Book),
-        BottomNavItem(Routes.EXPLORE, "Explorar", Icons.Default.Explore)
+        BottomNavItem(Routes.BOOK_LIST, R.string.nav_my_books, Icons.Default.Book),
+        BottomNavItem(Routes.EXPLORE, R.string.nav_explore, Icons.Default.Explore),
+        BottomNavItem(Routes.FAVORITES, R.string.nav_favorites, Icons.Default.Favorite)
     )
 
     if (authViewModel.isAdmin) {
-        bottomNavItems.add(BottomNavItem(Routes.ADMIN, "Admin", Icons.Default.People))
+        bottomNavItems.add(BottomNavItem(Routes.ADMIN, R.string.nav_admin, Icons.Default.People))
     }
 
-    bottomNavItems.add(BottomNavItem(Routes.SETTINGS, "Ajustes", Icons.Default.Settings))
+    bottomNavItems.add(BottomNavItem(Routes.SETTINGS, R.string.nav_settings, Icons.Default.Settings))
 
     Scaffold(
         bottomBar = {
             if (!isAuthScreen) {
                 NavigationBar {
                     bottomNavItems.forEach { item ->
+                        val label = stringResource(item.labelRes)
                         NavigationBarItem(
                             selected = currentRoute == item.route,
                             onClick = {
@@ -86,8 +92,8 @@ fun AppNavGraph(
                                     }
                                 }
                             },
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) }
+                            icon = { Icon(item.icon, contentDescription = label) },
+                            label = { Text(label) }
                         )
                     }
                 }
@@ -177,6 +183,13 @@ fun AppNavGraph(
                         bookViewModel = bookViewModel,
                         authViewModel = authViewModel,
                         context = context
+                    )
+                }
+
+                composable(Routes.FAVORITES) {
+                    FavoritesScreen(
+                        bookViewModel = bookViewModel,
+                        onBookClick = { bookId -> navController.navigate(Routes.getDetailRoute(bookId)) }
                     )
                 }
 

@@ -11,6 +11,8 @@ class BookRepository(
 
     fun observeByUser(userId: String) = bookDao.getBooksByUser(userId)
 
+    fun observeFavorites() = bookDao.getFavoriteBooks()
+
     fun observeSearch(query: String) = bookDao.searchBooks(query)
 
     suspend fun insert(book: BookEntity) {

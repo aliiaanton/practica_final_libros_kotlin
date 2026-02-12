@@ -7,6 +7,7 @@ object Routes {
     const val BOOK_FORM = "book_form?bookId={bookId}"
     const val BOOK_DETAIL = "book_detail/{bookId}"
     const val EXPLORE = "explore"
+    const val FAVORITES = "favorites"
     const val ADMIN = "admin"
     const val SETTINGS = "settings"
     const val PROFILE = "profile"

@@ -14,8 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.practicafinallibros.R
 import com.example.practicafinallibros.data.local.entity.BookEntity
 import com.example.practicafinallibros.data.remote.dto.OpenLibraryBookDto
 import com.example.practicafinallibros.notifications.NotificationHelper
@@ -36,7 +38,7 @@ fun ExploreScreen(
     val isOnline = ConnectivityUtil.isOnline(context)
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Explorar libros", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.explore_title), style = MaterialTheme.typography.headlineSmall)
         Spacer(Modifier.height(8.dp))
 
         if (!isOnline) {
@@ -48,7 +50,7 @@ fun ExploreScreen(
             ) {
                 Row(Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Icon(Icons.Default.WifiOff, contentDescription = null, tint = MaterialTheme.colorScheme.error)
-                    Text("Sin conexión a internet. Conéctate para buscar libros.", color = MaterialTheme.colorScheme.onErrorContainer)
+                    Text(stringResource(R.string.no_connection), color = MaterialTheme.colorScheme.onErrorContainer)
                 }
             }
             Spacer(Modifier.height(8.dp))
@@ -58,20 +60,19 @@ fun ExploreScreen(
             OutlinedTextField(
                 value = openLibraryViewModel.searchQuery,
                 onValueChange = { openLibraryViewModel.onSearchQueryChange(it) },
-                label = { Text("Buscar en Open Library") },
+                label = { Text(stringResource(R.string.explore_search_hint)) },
                 modifier = Modifier.weight(1f),
                 singleLine = true
             )
             IconButton(
                 onClick = {
                     if (!ConnectivityUtil.isOnline(context)) {
-                        // UI state change would require VM, so just skip
                         return@IconButton
                     }
                     openLibraryViewModel.searchBooks()
                 }
             ) {
-                Icon(Icons.Default.Search, contentDescription = "Buscar")
+                Icon(Icons.Default.Search, contentDescription = null)
             }
         }
 
@@ -98,13 +99,18 @@ fun ExploreScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(openLibraryViewModel.bookList) { book ->
+                val unknownAuthor = stringResource(R.string.unknown_author)
+                val importedDesc = stringResource(R.string.imported_desc)
+                val bookAddedTitle = stringResource(R.string.book_added_title)
+                val bookAddedMsg = stringResource(R.string.book_added_msg, book.title)
+
                 OpenLibraryBookCard(
                     book = book,
                     onAdd = {
                         val entity = BookEntity(
                             title = book.title,
-                            author = book.authorName?.joinToString(", ") ?: "Desconocido",
-                            description = "Importado desde Open Library",
+                            author = book.authorName?.joinToString(", ") ?: unknownAuthor,
+                            description = importedDesc,
                             imageUri = book.coverId?.let { "https://covers.openlibrary.org/b/id/$it-M.jpg" },
                             createdAt = System.currentTimeMillis(),
                             createdBy = authViewModel.userId ?: "",
@@ -116,8 +122,8 @@ fun ExploreScreen(
                         bookViewModel.addBook(entity)
                         NotificationHelper.sendSimpleNotification(
                             context,
-                            "Libro añadido",
-                            "\"${book.title}\" añadido a tu colección"
+                            bookAddedTitle,
+                            bookAddedMsg
                         )
                     }
                 )
@@ -139,7 +145,7 @@ private fun OpenLibraryBookCard(
             if (book.coverId != null) {
                 AsyncImage(
                     model = "https://covers.openlibrary.org/b/id/${book.coverId}-M.jpg",
-                    contentDescription = "Portada de ${book.title}",
+                    contentDescription = null,
                     modifier = Modifier
                         .width(60.dp)
                         .height(90.dp)
@@ -154,12 +160,12 @@ private fun OpenLibraryBookCard(
                     Text(it, style = MaterialTheme.typography.bodySmall, maxLines = 1)
                 }
                 book.firstPublishYear?.let {
-                    Text("Año: $it", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.year_label, it), style = MaterialTheme.typography.bodySmall)
                 }
             }
 
             IconButton(onClick = onAdd) {
-                Icon(Icons.Default.Add, contentDescription = "Añadir a mi colección")
+                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_to_collection))
             }
         }
     }

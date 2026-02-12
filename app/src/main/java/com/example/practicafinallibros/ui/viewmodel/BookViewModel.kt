@@ -8,7 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.practicafinallibros.data.local.entity.BookEntity
 import com.example.practicafinallibros.data.repository.BookRepository
 import com.example.practicafinallibros.ui.state.BooksUiState
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 class BookViewModel(
@@ -18,8 +20,14 @@ class BookViewModel(
     var bookList by mutableStateOf<List<BookEntity>>(emptyList())
         private set
 
+    var favoriteBooks by mutableStateOf<List<BookEntity>>(emptyList())
+        private set
+
     var uiState by mutableStateOf<BooksUiState>(BooksUiState.Idle)
         private set
+
+    private val _eventChannel = Channel<String>(Channel.BUFFERED)
+    val eventFlow = _eventChannel.receiveAsFlow()
 
     var showOnlyMine by mutableStateOf(false)
         private set
@@ -28,10 +36,12 @@ class BookViewModel(
         private set
 
     private var currentUserId: String = ""
+    private var lastDeletedBook: BookEntity? = null
 
     fun setCurrentUser(userId: String) {
         currentUserId = userId
         loadBooks()
+        loadFavorites()
     }
 
     fun toggleShowOnlyMine() {
@@ -46,6 +56,7 @@ class BookViewModel(
 
     private fun loadBooks() {
         viewModelScope.launch {
+            uiState = BooksUiState.Loading
             val flow = when {
                 searchQuery.isNotBlank() -> repository.observeSearch(searchQuery)
                 showOnlyMine -> repository.observeByUser(currentUserId)
@@ -53,6 +64,15 @@ class BookViewModel(
             }
             flow.collectLatest { books ->
                 bookList = books
+                uiState = BooksUiState.Idle
+            }
+        }
+    }
+
+    private fun loadFavorites() {
+        viewModelScope.launch {
+            repository.observeFavorites().collectLatest { favorites ->
+                favoriteBooks = favorites
             }
         }
     }
@@ -83,12 +103,25 @@ class BookViewModel(
 
     fun deleteBook(book: BookEntity) {
         viewModelScope.launch {
-            uiState = BooksUiState.Loading
+            lastDeletedBook = book
             try {
                 repository.delete(book)
-                uiState = BooksUiState.Success("Libro eliminado correctamente")
+                _eventChannel.send("Libro eliminado")
             } catch (e: Exception) {
                 uiState = BooksUiState.Error("Error al eliminar el libro")
+            }
+        }
+    }
+
+    fun undoDelete() {
+        lastDeletedBook?.let { book ->
+            viewModelScope.launch {
+                try {
+                    repository.insert(book.copy(id = 0))
+                    lastDeletedBook = null
+                } catch (e: Exception) {
+                    uiState = BooksUiState.Error("No se pudo deshacer la eliminación")
+                }
             }
         }
     }
@@ -101,7 +134,6 @@ class BookViewModel(
         viewModelScope.launch {
             try {
                 repository.toggleFavoriteStatus(bookId, isFavorite)
-                loadBooks()
                 uiState = BooksUiState.Success("Estado de favorito actualizado")
             } catch (e: Exception) {
                 uiState = BooksUiState.Error("Error al actualizar estado de favorito")

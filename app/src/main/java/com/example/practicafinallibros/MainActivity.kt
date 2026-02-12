@@ -1,14 +1,12 @@
 package com.example.practicafinallibros
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.practicafinallibros.data.local.database.AppDatabase
@@ -26,8 +24,20 @@ import com.example.practicafinallibros.ui.viewmodel.AuthViewModel
 import com.example.practicafinallibros.ui.viewmodel.BookViewModel
 import com.example.practicafinallibros.ui.viewmodel.OpenLibraryViewModel
 import com.example.practicafinallibros.ui.viewmodel.SettingsViewModel
+import com.example.practicafinallibros.util.LocaleHelper
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
+
+    override fun attachBaseContext(newBase: Context) {
+        val settingsRepository = SettingsRepository(newBase)
+        val language = runBlocking {
+            settingsRepository.observeLanguage().first()
+        }
+        super.attachBaseContext(LocaleHelper.updateResources(newBase, language))
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -39,7 +49,7 @@ class MainActivity : ComponentActivity() {
             AppDatabase::class.java,
             "libros-db"
         )
-        .fallbackToDestructiveMigration() // Añadido para permitir cambios en el esquema sin migraciones manuales
+        .fallbackToDestructiveMigration()
         .build()
 
         val settingsRepository = SettingsRepository(applicationContext)
@@ -55,7 +65,9 @@ class MainActivity : ComponentActivity() {
         val openLibraryViewModel = OpenLibraryViewModel(openLibraryRepository)
 
         setContent {
-            PracticaFinalLibrosTheme(darkTheme = settingsViewModel.darkMode) {
+            val darkMode by settingsViewModel.darkModeFlow.collectAsState(initial = false)
+            
+            PracticaFinalLibrosTheme(darkTheme = darkMode) {
                 val navController = rememberNavController()
                 AppNavGraph(
                     navController = navController,

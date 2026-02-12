@@ -1,18 +1,26 @@
 package com.example.practicafinallibros.ui.screen.settings
 
+import android.app.Activity
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.practicafinallibros.R
 import com.example.practicafinallibros.ui.viewmodel.AuthViewModel
 import com.example.practicafinallibros.ui.viewmodel.SettingsViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsScreen(
@@ -22,8 +30,11 @@ fun SettingsScreen(
     onNavigateToProfile: () -> Unit
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    
+    val currentLanguage by settingsViewModel.language.collectAsStateWithLifecycle()
 
-    // Navigate on logout
     LaunchedEffect(authViewModel.isLoggedIn) {
         if (!authViewModel.isLoggedIn) {
             onLogout()
@@ -36,9 +47,8 @@ fun SettingsScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Ajustes", style = MaterialTheme.typography.headlineSmall)
+        Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
 
-        // User info with profile edit button
         ElevatedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp)) {
                 Row(
@@ -57,20 +67,59 @@ fun SettingsScreen(
                         Column {
                             Text(authViewModel.userName ?: "-", style = MaterialTheme.typography.titleMedium)
                             Text(
-                                if (authViewModel.isAdmin) "Administrador" else "Usuario",
+                                if (authViewModel.isAdmin) stringResource(R.string.role_admin) else stringResource(R.string.role_user),
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
                     IconButton(onClick = onNavigateToProfile) {
-                        Icon(Icons.Default.Edit, contentDescription = "Editar perfil")
+                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_profile))
                     }
                 }
             }
         }
 
-        // Dark mode toggle
+        ElevatedCard(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(Icons.Default.Language, contentDescription = null)
+                    Text("Idioma / Language", style = MaterialTheme.typography.titleSmall)
+                }
+                Spacer(Modifier.height(12.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    FilterChip(
+                        selected = currentLanguage == "es",
+                        onClick = { 
+                            scope.launch {
+                                settingsViewModel.setLanguage("es").join()
+                                restartActivity(context as Activity)
+                            }
+                        },
+                        label = { Text("Español") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    FilterChip(
+                        selected = currentLanguage == "en",
+                        onClick = { 
+                            scope.launch {
+                                settingsViewModel.setLanguage("en").join()
+                                restartActivity(context as Activity)
+                            }
+                        },
+                        label = { Text("English") },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+        }
+
         ElevatedCard(Modifier.fillMaxWidth()) {
             Row(
                 Modifier
@@ -84,18 +133,17 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Default.DarkMode, contentDescription = null)
-                    Text("Modo oscuro", style = MaterialTheme.typography.bodyLarge)
+                    Text(stringResource(R.string.dark_mode), style = MaterialTheme.typography.bodyLarge)
                 }
                 Switch(
                     checked = settingsViewModel.darkMode,
-                    onCheckedChange = { settingsViewModel.setterDarkMode(it) }
+                    onCheckedChange = { settingsViewModel.updateDarkMode(it) }
                 )
             }
         }
 
         Spacer(Modifier.weight(1f))
 
-        // Logout button
         OutlinedButton(
             onClick = { showLogoutDialog = true },
             modifier = Modifier.fillMaxWidth(),
@@ -105,28 +153,34 @@ fun SettingsScreen(
         ) {
             Icon(Icons.Default.Logout, contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            Text("Cerrar sesión")
+            Text(stringResource(R.string.logout))
         }
     }
 
     if (showLogoutDialog) {
         AlertDialog(
             onDismissRequest = { showLogoutDialog = false },
-            title = { Text("Cerrar sesión") },
-            text = { Text("¿Estás seguro de que quieres cerrar sesión?") },
+            title = { Text(stringResource(R.string.logout_confirm_title)) },
+            text = { Text(stringResource(R.string.logout_confirm_msg)) },
             confirmButton = {
                 TextButton(onClick = {
                     authViewModel.logout()
                     showLogoutDialog = false
                 }) {
-                    Text("Cerrar sesión", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.logout), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showLogoutDialog = false }) {
-                    Text("Cancelar")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
     }
+}
+
+private fun restartActivity(activity: Activity) {
+    val intent = activity.intent
+    activity.finish()
+    activity.startActivity(intent)
 }
