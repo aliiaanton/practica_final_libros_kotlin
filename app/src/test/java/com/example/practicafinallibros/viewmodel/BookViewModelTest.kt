@@ -36,7 +36,7 @@ class BookViewModelTest {
     @Before
     fun setup() {
         whenever(repository.observeAll()).doReturn(flowOf(testBooks))
-        whenever(repository.observeFavorites()).doReturn(flowOf(emptyList()))
+        whenever(repository.observeFavorites(any())).doReturn(flowOf(emptyList()))
         whenever(repository.observeByUser(any())).doReturn(flowOf(emptyList()))
         whenever(repository.observeSearch(any())).doReturn(flowOf(emptyList()))
         

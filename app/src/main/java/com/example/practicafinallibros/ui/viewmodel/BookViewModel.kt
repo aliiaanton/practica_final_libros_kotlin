@@ -74,7 +74,7 @@ class BookViewModel(
 
     private fun loadFavorites() {
         viewModelScope.launch {
-            repository.observeFavorites().collectLatest { favorites ->
+            repository.observeFavorites(currentUserId).collectLatest { favorites ->
                 favoriteBooks = favorites
                 isLoadingFavorites = false
             }

@@ -17,8 +17,8 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE createdBy = :userId ORDER BY createdAt DESC")
     fun getBooksByUser(userId: String): Flow<List<BookEntity>>
 
-    @Query("SELECT * FROM books WHERE isFavorite = 1 ORDER BY createdAt DESC")
-    fun getFavoriteBooks(): Flow<List<BookEntity>>
+    @Query("SELECT * FROM books WHERE isFavorite = 1 AND createdBy = :userId ORDER BY createdAt DESC")
+    fun getFavoriteBooks(userId: String): Flow<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%' OR author LIKE '%' || :query || '%'")
     fun searchBooks(query: String): Flow<List<BookEntity>>

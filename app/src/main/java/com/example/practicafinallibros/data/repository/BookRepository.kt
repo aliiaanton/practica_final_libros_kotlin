@@ -2,6 +2,7 @@ package com.example.practicafinallibros.data.repository
 
 import com.example.practicafinallibros.data.local.dao.BookDao
 import com.example.practicafinallibros.data.local.entity.BookEntity
+import kotlinx.coroutines.flow.Flow
 
 class BookRepository(
     private val bookDao: BookDao
@@ -11,7 +12,7 @@ class BookRepository(
 
     fun observeByUser(userId: String) = bookDao.getBooksByUser(userId)
 
-    fun observeFavorites() = bookDao.getFavoriteBooks()
+    fun observeFavorites(userId: String): Flow<List<BookEntity>> = bookDao.getFavoriteBooks(userId)
 
     fun observeSearch(query: String) = bookDao.searchBooks(query)
 

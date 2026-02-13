@@ -22,7 +22,7 @@
     <string name="delete_book_title">Eliminar libro</string>
     <string name="delete_book_msg">¿Estás seguro de que quieres eliminar \"%1$s\"?</string>
 
-    <string name="nav_my_books">Mis Libros</string>
+    <string name="nav_my_books">Libros</string>
     <string name="nav_explore">Explorar</string>
     <string name="nav_admin">Admin</string>
     <string name="nav_settings">Ajustes</string>
