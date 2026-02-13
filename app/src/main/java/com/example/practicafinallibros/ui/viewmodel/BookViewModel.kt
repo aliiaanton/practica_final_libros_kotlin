@@ -137,7 +137,7 @@ class BookViewModel(
     fun toggleFavoriteStatus(bookId: Int, isFavorite: Boolean) {
         viewModelScope.launch {
             try {
-                repository.toggleFavoriteStatus(bookId, isFavorite)
+                repository.toggleFavoriteStatus(currentUserId, bookId, isFavorite)
                 uiState = BooksUiState.Success("Estado de favorito actualizado")
             } catch (e: Exception) {
                 uiState = BooksUiState.Error("Error al actualizar estado de favorito")

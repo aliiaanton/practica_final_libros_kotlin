@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
+import com.example.practicafinallibros.data.local.DatabaseCallback
 import com.example.practicafinallibros.data.local.database.AppDatabase
 import com.example.practicafinallibros.data.remote.RetrofitClient
 import com.example.practicafinallibros.data.repository.AuthRepository
@@ -49,11 +50,12 @@ class MainActivity : ComponentActivity() {
             AppDatabase::class.java,
             "libros-db"
         )
-        .fallbackToDestructiveMigration()
-        .build()
+            .fallbackToDestructiveMigration(true)
+            .addCallback(DatabaseCallback())
+            .build()
 
         val settingsRepository = SettingsRepository(applicationContext)
-        val bookRepository = BookRepository(database.bookDao())
+        val bookRepository = BookRepository(database.bookDao(), database.userFavoriteDao())
         val authRepository = AuthRepository(RetrofitClient.usersApi, settingsRepository)
         val userRepository = UserRepository(RetrofitClient.usersApi, database.userDao())
         val openLibraryRepository = OpenLibraryRepository(RetrofitClient.booksApi)

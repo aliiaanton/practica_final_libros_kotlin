@@ -47,7 +47,6 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(24.dp))
 
-            // Mostrar nombre
             Text(
                 text = stringResource(R.string.name_label) + ": ${authViewModel.userName ?: "N/A"}",
                 style = MaterialTheme.typography.bodyLarge,
@@ -56,7 +55,6 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(16.dp))
 
-            // Mostrar email
             Text(
                 text = stringResource(R.string.email_label) + ": ${authViewModel.userEmail ?: "N/A"}",
                 style = MaterialTheme.typography.bodyLarge,
