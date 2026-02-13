@@ -10,6 +10,7 @@ import com.example.practicafinallibros.data.local.entity.UserEntity
 @Database(
     entities = [BookEntity::class, UserEntity::class],
     version = 2,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao

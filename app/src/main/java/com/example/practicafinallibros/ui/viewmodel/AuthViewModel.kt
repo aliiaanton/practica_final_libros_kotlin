@@ -93,7 +93,7 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 uiState = AuthUiState.Error("No se pudo conectar al servidor")
-            }
+0            }
         }
     }
 

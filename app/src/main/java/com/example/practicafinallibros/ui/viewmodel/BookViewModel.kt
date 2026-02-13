@@ -35,6 +35,9 @@ class BookViewModel(
     var searchQuery by mutableStateOf("")
         private set
 
+    var isLoadingFavorites by mutableStateOf(true)
+        private set
+
     private var currentUserId: String = ""
     private var lastDeletedBook: BookEntity? = null
 
@@ -73,6 +76,7 @@ class BookViewModel(
         viewModelScope.launch {
             repository.observeFavorites().collectLatest { favorites ->
                 favoriteBooks = favorites
+                isLoadingFavorites = false
             }
         }
     }

@@ -12,6 +12,7 @@
     <string name="edit_profile">Editar perfil</string>
     <string name="profile_title">Mi Perfil</string>
     <string name="name_label">Nombre</string>
+    <string name="email_label">Email</string>
     <string name="save_changes">Guardar Cambios</string>
     <string name="back">Volver</string>
     <string name="share">Compartir</string>

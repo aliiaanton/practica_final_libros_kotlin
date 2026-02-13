@@ -2,6 +2,7 @@ package com.example.practicafinallibros.ui.screen.settings
 
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
@@ -48,7 +49,11 @@ fun SettingsScreen(
     ) {
         Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineSmall)
 
-        ElevatedCard(Modifier.fillMaxWidth()) {
+        ElevatedCard(
+            Modifier
+                .fillMaxWidth()
+                .clickable { onNavigateToProfile() }
+        ) {
             Column(Modifier.padding(16.dp)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),

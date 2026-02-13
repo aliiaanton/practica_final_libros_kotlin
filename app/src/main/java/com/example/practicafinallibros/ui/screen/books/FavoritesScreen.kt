@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.practicafinallibros.R
 import com.example.practicafinallibros.data.local.entity.BookEntity
+import com.example.practicafinallibros.ui.components.SkeletonBookList
 import com.example.practicafinallibros.ui.viewmodel.BookViewModel
 
 @Composable
@@ -23,13 +24,16 @@ fun FavoritesScreen(
     onBookClick: (Int) -> Unit
 ) {
     val favoriteBooks = bookViewModel.favoriteBooks
+    val isLoadingFavorites = bookViewModel.isLoadingFavorites
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
         Text(stringResource(R.string.favorites_title), style = MaterialTheme.typography.headlineSmall)
         
         Spacer(Modifier.height(12.dp))
 
-        if (favoriteBooks.isEmpty()) {
+        if (isLoadingFavorites && favoriteBooks.isEmpty()) {
+            SkeletonBookList()
+        } else if (favoriteBooks.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.no_favorites))
             }
