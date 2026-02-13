@@ -34,26 +34,33 @@ class AuthViewModel(
     var userName by mutableStateOf<String?>(null)
         private set
 
+    var userEmail by mutableStateOf<String?>(null)
+
     init {
         viewModelScope.launch {
-            settingsRepository.getAuthToken().collectLatest {
-                savedToken -> token = savedToken
+            settingsRepository.getAuthToken().collectLatest { savedToken ->
+                token = savedToken
                 isLoggedIn = savedToken != null
             }
         }
         viewModelScope.launch {
-            settingsRepository.isUserAdmin().collectLatest {
-                admin -> isAdmin = admin
+            settingsRepository.isUserAdmin().collectLatest { admin ->
+                isAdmin = admin
             }
         }
         viewModelScope.launch {
-            settingsRepository.getUserId().collectLatest {
-                id -> userId = id
+            settingsRepository.getUserId().collectLatest { id ->
+                userId = id
             }
         }
         viewModelScope.launch {
-            settingsRepository.getUserName().collectLatest {
-                name -> userName = name
+            settingsRepository.getUserName().collectLatest { name ->
+                userName = name
+            }
+        }
+        viewModelScope.launch {
+            settingsRepository.getUserEmail().collectLatest { email ->
+                userEmail = email
             }
         }
     }
@@ -86,22 +93,6 @@ class AuthViewModel(
                 }
             } catch (e: Exception) {
                 uiState = AuthUiState.Error("No se pudo conectar al servidor")
-            }
-        }
-    }
-
-    fun updateProfile(newName: String) {
-        viewModelScope.launch {
-            uiState = AuthUiState.Loading
-            try {
-                val result = authRepository.updateProfile(newName)
-                if (result.isSuccess) {
-                    uiState = AuthUiState.Success("Perfil actualizado correctamente")
-                } else {
-                    uiState = AuthUiState.Error(result.exceptionOrNull()?.message ?: "Error al actualizar")
-                }
-            } catch (e: Exception) {
-                uiState = AuthUiState.Error("Error de conexión")
             }
         }
     }

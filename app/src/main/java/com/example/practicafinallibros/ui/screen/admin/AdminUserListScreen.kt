@@ -31,14 +31,12 @@ fun AdminUserListScreen(
     val context = LocalContext.current
     val isOnline = ConnectivityUtil.isOnline(context)
 
-    // Refresh on first composition
     LaunchedEffect(Unit) {
         if (isOnline) {
             adminViewModel.refreshUsers(token)
         }
     }
 
-    // Snackbar for success/error messages
     val snackbarHostState = remember { SnackbarHostState() }
     LaunchedEffect(uiState) {
         when (uiState) {

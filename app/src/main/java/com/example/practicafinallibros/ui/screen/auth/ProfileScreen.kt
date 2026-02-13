@@ -8,7 +8,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.practicafinallibros.R
 import com.example.practicafinallibros.ui.state.AuthUiState
 import com.example.practicafinallibros.ui.viewmodel.AuthViewModel
 
@@ -21,19 +23,19 @@ fun ProfileScreen(
     var name by remember { mutableStateOf(authViewModel.userName ?: "") }
     val uiState = authViewModel.uiState
 
-    LaunchedEffect(uiState) {
-        if (uiState is AuthUiState.Success) {
-            // Podrías mostrar un snackbar o mensaje aquí si quisieras
+    LaunchedEffect(authViewModel.userName) {
+        if (name.isEmpty() && authViewModel.userName != null) {
+            name = authViewModel.userName!!
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mi Perfil") },
+                title = { Text(stringResource(R.string.profile_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -58,53 +60,19 @@ fun ProfileScreen(
             OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("Nombre") },
+                label = { Text(stringResource(R.string.name_label)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
-            )
-
-            Spacer(Modifier.height(8.dp))
-            
-            Text(
-                text = "Email: ${authViewModel.userId ?: "No disponible"}", // Usando userId como email si es lo que guardamos
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
             Spacer(Modifier.height(32.dp))
 
             Button(
-                onClick = { authViewModel.updateProfile(name) },
+                onClick = { /* No hacer nada o mostrar un mensaje */ },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = name.isNotBlank() && uiState !is AuthUiState.Loading
+                enabled = false // Desactivamos el botón
             ) {
-                if (uiState is AuthUiState.Loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Guardar Cambios")
-                }
-            }
-
-            if (uiState is AuthUiState.Error) {
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = uiState.message,
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-            
-            if (uiState is AuthUiState.Success) {
-                Spacer(Modifier.height(16.dp))
-                Text(
-                    text = uiState.message,
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodySmall
-                )
+                Text(stringResource(R.string.save_changes))
             }
         }
     }

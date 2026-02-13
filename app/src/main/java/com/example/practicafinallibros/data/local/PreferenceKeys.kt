@@ -9,5 +9,6 @@ object PreferenceKeys {
     val USER_ROLE = stringPreferencesKey("user_role")
     val USER_ID = stringPreferencesKey("user_id")
     val USER_NAME = stringPreferencesKey("user_name")
+    val USER_EMAIL = stringPreferencesKey("user_email")
     val LANGUAGE = stringPreferencesKey("language")
 }

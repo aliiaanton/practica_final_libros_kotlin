@@ -69,12 +69,23 @@ class SettingsRepository(private val context: Context) {
         preferences[PreferenceKeys.USER_NAME]
     }
 
+    suspend fun saveUserEmail(email: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferenceKeys.USER_EMAIL] = email
+        }
+    }
+
+    fun getUserEmail(): Flow<String?> = context.dataStore.data.map { preferences ->
+        preferences[PreferenceKeys.USER_EMAIL]
+    }
+
     suspend fun clearUserData() {
         context.dataStore.edit { preferences ->
             preferences.remove(PreferenceKeys.AUTH_TOKEN)
             preferences.remove(PreferenceKeys.USER_ROLE)
             preferences.remove(PreferenceKeys.USER_ID)
             preferences.remove(PreferenceKeys.USER_NAME)
+            preferences.remove(PreferenceKeys.USER_EMAIL)
         }
     }
 

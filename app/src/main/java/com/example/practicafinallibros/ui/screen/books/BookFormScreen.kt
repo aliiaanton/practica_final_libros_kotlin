@@ -58,7 +58,6 @@ fun BookFormScreen(
     var authorError by remember { mutableStateOf(false) }
     var descriptionError by remember { mutableStateOf(false) }
 
-    // Camera
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
@@ -70,7 +69,6 @@ fun BookFormScreen(
         ActivityResultContracts.RequestPermission()
     ) { granted -> hasCameraPermission = granted }
 
-    // Photo file URI for full-resolution camera capture
     val photoFileUri = remember {
         val file = File(context.cacheDir, "book_photo_${System.currentTimeMillis()}.jpg")
         FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
@@ -84,7 +82,6 @@ fun BookFormScreen(
         }
     }
 
-    // Gallery picker
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri: Uri? ->
@@ -97,7 +94,6 @@ fun BookFormScreen(
         }
     }
 
-    // Load existing book if editing
     LaunchedEffect(bookId) {
         if (isEditing && !loaded) {
             val book = bookViewModel.getBookById(bookId!!)
@@ -115,7 +111,6 @@ fun BookFormScreen(
         }
     }
 
-    // Navigate back on success
     val uiState = bookViewModel.uiState
     LaunchedEffect(uiState) {
         if (uiState is BooksUiState.Success) {
@@ -141,7 +136,6 @@ fun BookFormScreen(
             )
         }
 
-        // Image preview
         if (imageUri != null) {
             AsyncImage(
                 model = imageUri,
@@ -154,7 +148,6 @@ fun BookFormScreen(
             )
         }
 
-        // Camera & Gallery buttons
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = {
@@ -180,7 +173,6 @@ fun BookFormScreen(
             }
         }
 
-        // Form fields
         OutlinedTextField(
             value = title,
             onValueChange = { title = it; titleError = false },

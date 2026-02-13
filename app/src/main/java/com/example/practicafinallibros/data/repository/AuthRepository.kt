@@ -23,9 +23,10 @@ class AuthRepository(
                 settingsRepository.saveUserRole(body.role)
                 settingsRepository.saveUserId(body.userId.toString())
                 settingsRepository.saveUserName(body.name)
+                settingsRepository.saveUserEmail(body.email)
                 Result.success(body)
             } else {
-                Result.failure(Exception("Error: ${response.code()}"))
+                Result.failure(Exception("Error ${response.code()}: ${response.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -37,28 +38,9 @@ class AuthRepository(
             val registerResponse = api.register(RegisterRequest(name, email, password))
 
             if (registerResponse.isSuccessful) {
-                // Auto-login tras registro exitoso
                 login(email, password)
             } else {
-                Result.failure(Exception("Error: ${registerResponse.code()}"))
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-
-    suspend fun updateProfile(newName: String): Result<UserDto> {
-        return try {
-            val token = settingsRepository.getAuthToken().firstOrNull() ?: return Result.failure(Exception("No token"))
-            val userId = settingsRepository.getUserId().firstOrNull()?.toLongOrNull() ?: return Result.failure(Exception("No userId"))
-            
-            val response = api.updateUser("Bearer $token", userId, UpdateUserRequest(newName))
-            if (response.isSuccessful) {
-                val updatedUser = response.body()!!
-                settingsRepository.saveUserName(updatedUser.name)
-                Result.success(updatedUser)
-            } else {
-                Result.failure(Exception("Error: ${response.code()}"))
+                Result.failure(Exception("Error ${registerResponse.code()}: ${registerResponse.message()}"))
             }
         } catch (e: Exception) {
             Result.failure(e)

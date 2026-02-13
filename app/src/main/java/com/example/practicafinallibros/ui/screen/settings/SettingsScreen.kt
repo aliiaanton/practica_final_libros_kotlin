@@ -5,7 +5,6 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
@@ -72,9 +71,6 @@ fun SettingsScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
-                    }
-                    IconButton(onClick = onNavigateToProfile) {
-                        Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.edit_profile))
                     }
                 }
             }
